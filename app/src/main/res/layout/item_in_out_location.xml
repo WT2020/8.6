@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical" android:layout_width="match_parent"
+              android:layout_height="match_parent">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_old_location"
+        android:background="#fff">
+        <TextView
+            style="@style/TextTitleStyle"
+            android:text="货位架" />
+        <Spinner
+            android:layout_alignParentRight="true"
+            android:id="@+id/sp_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_new_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/TextTitleStyle"
+            android:text="货位架"/>
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:hint="22"
+            android:paddingRight="15dp"
+            />
+
+    </RelativeLayout>
+
+    <include
+        layout="@layout/item_line_horizontal"
+        />
+</LinearLayout>
+</LinearLayout>

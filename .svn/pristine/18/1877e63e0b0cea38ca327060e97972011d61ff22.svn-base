@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="时间" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_item_application_time"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="2017-11-24 09:54:00" />
+        </RelativeLayout>
+        <!--<include layout="@layout/item_line_horizontal" />-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="负责人" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_item_application_people"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="张三" />
+        </RelativeLayout>
+        <!--<include layout="@layout/item_line_horizontal" />-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="状态" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_item_application_state"
+                style="@style/TextValueStyle"
+                android:text="未审核" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

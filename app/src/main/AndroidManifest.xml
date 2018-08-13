@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.hdo.WarehouseDroid">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/> <!-- 震动权限 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- 启动界面 -->
+        <activity
+            android:name=".activity.GuidePageActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- 登录界面 -->
+        <activity android:name=".activity.LoginActivity"/>
+        <!-- 主界面 -->
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTask"/>
+        <!-- 入/出库申请界面 -->
+        <activity
+            android:name=".activity.InOutHouseActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <!-- 入/出库申请物品列表界面 -->
+        <activity android:name=".activity.InOutThingsListActivity"/>
+        <!-- 入/出库申请物品添加/查看界面 -->
+        <activity android:name=".activity.InOutThingAddLookUpNew1Activity"/>
+        <activity android:name=".activity.InOutThingAddLookUpActivity"/>
+        <activity android:name=".activity.InThingAddLookUpActivity"/>
+        <activity android:name=".activity.OutThingAddLookUpActivity"/>
+        <!-- 入/出库申请物品选择界面 -->
+        <activity android:name=".activity.ChooseThingActivity"/>
+        <!-- 出入移库申请列表界面 -->
+        <activity
+            android:name=".activity.InOutMoveApplicationActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+        <!-- 出入移库申请审核界面 -->
+        <activity android:name=".activity.InOutMoveApplicationDetailActivity"/>
+        <!-- 库存查询界面 -->
+        <activity
+            android:name=".activity.HouseStateActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+        <!-- 库存物品详情界面 -->
+        <activity android:name=".activity.StateDetailActivity"/>
+        <!-- 库存物品详情物品界面 -->
+        <activity android:name=".activity.StateDetailListActivity"/>
+        <!-- 库存物品详情物品详细信息界面 -->
+        <activity android:name=".activity.StateListDetailActivity"/>
+        <!-- 账单记录界面 -->
+        <activity
+            android:name=".activity.SettlementActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <!-- 账单记录详情界面 -->
+        <activity android:name=".activity.SettlementDetailActivity"/>
+        <!-- 二维码扫描 -->
+        <activity android:name="com.google.zxing.activity.CaptureActivity"/>
+        <!-- 个人资料 -->
+        <activity android:name=".activity.PersonalInfoActivity"/>
+        <!-- 关于我们 -->
+        <activity android:name=".activity.AboutActivity"/>
+    </application>
+
+</manifest>

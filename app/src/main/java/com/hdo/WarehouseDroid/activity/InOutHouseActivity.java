@@ -1,0 +1,412 @@
+package com.hdo.WarehouseDroid.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.hdo.WarehouseDroid.R;
+import com.hdo.WarehouseDroid.adapter.CustomerChooseAdapter;
+import com.hdo.WarehouseDroid.adapter.WareHouseInfoAdapter;
+import com.hdo.WarehouseDroid.adapter.WarehouseZoneAdapter;
+import com.hdo.WarehouseDroid.base.BaseActivity;
+import com.hdo.WarehouseDroid.bean.Customer;
+import com.hdo.WarehouseDroid.bean.HouseChange;
+import com.hdo.WarehouseDroid.bean.InOutInfoResp;
+import com.hdo.WarehouseDroid.bean.User;
+import com.hdo.WarehouseDroid.bean.WarehouseInfo;
+import com.hdo.WarehouseDroid.bean.WarehouseThing;
+import com.hdo.WarehouseDroid.utils.NetworkUtils;
+import com.hdo.WarehouseDroid.utils.SpUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+/**
+ * description 入库申请Activity界面
+ * author 张建银
+ * version 1.0
+ * created 2017/11/23
+ * modified 吴小雪 on 2017/12/18  填充入库申请界面的数据信息
+ * modified on 2017/12/21 合并出入库界面，完成出入库申请的实现
+ * modified by 张建银 on 2018/2/2 出入库新版申请（管理员面向客户的操作，即需要选择客户）
+ */
+
+public class InOutHouseActivity extends BaseActivity {
+
+    //toolbar组件
+    Toolbar toolbar;
+    TextView toolbar_title;
+    TextView toolbar_btn;
+
+
+    private String token = "";
+    private User user=null;
+
+    //单号
+    TextView tvId;
+    private String number;
+    //仓库
+    Spinner spHouse;
+    //区位
+    Spinner spArea;
+    //客户
+    Spinner spCostomer;
+    //面积
+    EditText squareMeasure;
+    //计费方式
+    EditText cost;
+    //负责人
+    EditText mainPeople;
+    //来源
+    TextView tvComeGo;
+    //来源标题
+    TextView tvHintComeGo;
+    //备注
+    EditText remark;
+    //物品信息
+    LinearLayout icThings;
+    //租用信息
+    LinearLayout llRent;
+    //取消按钮
+    Button cancel;
+    //提交按钮
+    Button submit;
+
+    Context context;
+
+    private Boolean isIn;
+
+    //物品列表数据
+    ArrayList<WarehouseThing> returnData;
+
+    //提交数据
+    private HouseChange change;
+
+    //出入库准备数据（客户与仓库信息）
+    InOutInfoResp inOutInfoResp;
+    WarehouseInfo warehouseInfo;
+    WarehouseInfo.WarehouseZone zone;
+    Customer customer;
+
+    //客户Id，以及客户所选计费类型Id
+    String customerId;
+    String costTypeId;
+
+    @Override
+    public void setLayout() {
+        setContentView(R.layout.activity_in_out);
+    }
+
+    @Override
+    public void initData() {
+        customerId = "";
+        costTypeId = "";
+        context = InOutHouseActivity.this;
+        submit.setEnabled(false);
+        isIn = getIntent().getBooleanExtra("flag",true);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                user = SpUtils.getUser(context);
+                token = user.getToken();
+                Call call;
+                if (isIn){
+                    call = NetworkUtils.getInstance().applyId(token);
+                }else{
+                    call = NetworkUtils.getInstance().applyOUtId(token);
+                }
+                try {
+                    Response response = call.execute();
+                    ResponseBody body = response.body();
+                    if (body == null){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        String result = body.string();
+                        JSONObject object = new JSONObject(result);
+                        if(object.getString("code").equals("200")){
+                            //获取单号和其它数据
+                            inOutInfoResp = new Gson().fromJson(result, InOutInfoResp.class);
+                            number = inOutInfoResp.getData().getNumber();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tvId.setText(number);
+                                    submit.setEnabled(true);
+                                    spHouse.setAdapter(new WareHouseInfoAdapter(context,R.layout.goodsitem,inOutInfoResp.getData().getWarehouseInfo()));
+                                    spCostomer.setAdapter(new CustomerChooseAdapter(context,R.layout.goodsitem,inOutInfoResp.getData().getCustomers()));
+                                }
+                            });
+                        } else if (object.getString("code").equals("101")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ReLoging.JumpToLoginPager(context);//登录失效后跳转至登录页面
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context,"未知错误，请重试",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        //若提交数据为空，则创建一个实例
+        if (change==null){
+            change = new HouseChange();
+        }
+        //如果获取的传递数据为空，创建新的ArrayList
+        if(returnData==null){
+            returnData = new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void initView() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_btn = (TextView)findViewById(R.id.toolbar_button);
+
+        icThings = findViewById(R.id.ic_things);
+        llRent = findViewById(R.id.ll_rent);
+        tvId = (TextView)findViewById(R.id.tv_id);
+
+        spHouse = (Spinner)findViewById(R.id.sp_house);
+        spArea = (Spinner)findViewById(R.id.sp_area);
+        spCostomer = findViewById(R.id.sp_customer);
+
+        squareMeasure = findViewById(R.id.tv_square_measure);
+        cost = findViewById(R.id.tv_cost);
+        mainPeople = (EditText)findViewById(R.id.main_people);
+        tvHintComeGo = (TextView)findViewById(R.id.tv_hint_come_go);
+        tvComeGo = (TextView)findViewById(R.id.tv_come_go);
+        remark = (EditText)findViewById(R.id.remark);
+        cancel = findViewById(R.id.btn_cancel);
+        submit = findViewById(R.id.btn_commit);
+    }
+    @Override
+    public void setView() {
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar!=null){
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
+        if (isIn){
+            toolbar_title.setText("入库申请");
+            llRent.setVisibility(View.VISIBLE);
+            tvHintComeGo.setText("来源");
+            tvComeGo.setHint("请输入来源信息");
+        }else{
+            toolbar_title.setText("出库申请");
+            tvHintComeGo.setText("去向");
+            tvComeGo.setHint("请输入去向信息");
+
+        }
+        toolbar_btn.setVisibility(View.GONE);
+        //物品信息添加与查询
+        icThings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, InOutThingsListActivity.class);
+                intent.putExtra("flag",isIn);
+                intent.putExtra("customerId",customerId);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("thingList",returnData);
+                bundle.putSerializable("zone",zone);
+                intent.putExtras(bundle);
+                startActivityForResult(intent,1);
+            }
+        });
+        mainPeople.setText(SpUtils.getUser(context).getName());
+        spHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                warehouseInfo = inOutInfoResp.getData().getWarehouseInfo().get(i);
+                spArea.setAdapter(new WarehouseZoneAdapter(context,R.layout.goodsitem,warehouseInfo.getWarehouseZoneVos()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        spArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                zone = warehouseInfo.getWarehouseZoneVos().get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        spCostomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                customer = inOutInfoResp.getData().getCustomers().get(i);
+                if(customer!=null&&customer.getCostType()!=null){
+                    squareMeasure.setText(String.valueOf(customer.getRentArea()));
+                    cost.setText(customer.getCostType().getSpec());
+                    costTypeId = String.valueOf(cost.getId());
+                }else{
+                    squareMeasure.setText("");
+                    cost.setText("");
+                }
+                customerId = String.valueOf(customer.getId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        //取消点击
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        //提交点击
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (returnData==null||returnData.size()==0){
+                    Toast.makeText(context,"您未添加任何物品",Toast.LENGTH_LONG).show();
+                }else if(customer==null||customer.getCostType()==null){
+                        Toast.makeText(context,"您未添加选择客户或者客户未租用仓库！",Toast.LENGTH_LONG).show();
+                    }else if ("".equals(mainPeople.getText().toString().trim())){
+                            Toast.makeText(context,"负责人为空！", Toast.LENGTH_SHORT).show();
+                        }else if ("".equals(tvComeGo.getText().toString().trim())){
+                            Toast.makeText(context,"来源信息为空！", Toast.LENGTH_SHORT).show();
+                        }else {
+                            if(isIn){
+                                change.setApplyInUser(mainPeople.getText().toString());
+                                change.setWhereFrom(tvComeGo.getText().toString());
+                            }else{
+                                change.setApplyOutUser(mainPeople.getText().toString());
+                                change.setWhereGo(tvComeGo.getText().toString());
+                            }
+                            change.setGoodsData(returnData);
+                            change.setNumber(tvId.getText().toString());
+                            change.setRemark(remark.getText().toString());
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Call call;
+                                    if (isIn){
+                                        call = NetworkUtils.getInstance().inHouseSubmit(token,change,customerId,costTypeId);
+                                    } else {
+                                        call = NetworkUtils.getInstance().outHouseSubmit(token,change,customerId);
+                                    }
+                                    try {
+                                        Response response = call.execute();
+                                        ResponseBody body = response.body();
+                                        if (body == null) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(context, "网络请求失败", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        } else {
+                                            String result = body.string();
+                                            JSONObject object = new JSONObject(result);
+                                            if (object.getString("code").equals("200")) {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(context, "提交成功", Toast.LENGTH_LONG).show();
+                                                        finish();
+                                                    }
+                                                });
+                                            } else if (object.getString("code").equals("101")) {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        ReLoging.JumpToLoginPager(context);//登录失效后跳转至登录页面
+                                                    }
+                                                });
+                                            } else {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(context, "未知错误，请重试", Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+                        }
+
+
+            }
+        });
+    }
+
+    //设置返回按钮
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //重写OnActivityResult方法，获取数据
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if(resultCode == RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    if (bundle!=null){
+                        returnData = (ArrayList<WarehouseThing>) bundle.getSerializable("thing");
+                    }
+                }
+                break;
+            default:
+        }
+    }
+}

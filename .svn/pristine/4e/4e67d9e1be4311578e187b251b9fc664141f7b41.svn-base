@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/my_toolbar"/>
+
+    <include
+        android:id="@+id/ic_application_detail"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_ic_application_detail"/>
+
+    <include
+        android:id="@+id/ic_things"
+        android:layout_below="@+id/ic_application_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_in_out_move_things"/>
+
+    <include
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_ok_cancel_btn"/>
+</RelativeLayout>

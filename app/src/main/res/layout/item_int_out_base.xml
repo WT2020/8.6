@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="单号" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_id"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="仓库" />
+            <Spinner
+                android:layout_alignParentRight="true"
+                android:id="@+id/sp_house"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="区位" />
+            <Spinner
+                android:layout_alignParentRight="true"
+                android:id="@+id/sp_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="负责人" />
+            <EditText
+                android:id="@+id/main_people"
+                android:hint="请输入负责人"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                android:id="@+id/tv_hint_come_go"
+                style="@style/TextTitleStyle"
+                android:text="来源" />
+
+            <EditText
+                android:id="@+id/tv_come_go"
+                style="@style/TextValueStyle"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/tv_hint_come_go"
+                android:layout_toRightOf="@+id/tv_hint_come_go"
+                android:hint="请输入"
+                android:background="@null"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginLeft="14dp"
+                android:text="备注"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:layout_marginEnd="14dp"
+                android:layout_marginStart="14dp"
+                android:hint="请输入备注信息"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/remark"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

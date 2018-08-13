@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey300">
+    <include layout="@layout/my_toolbar"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
+
+                <TextView
+                    style="@style/TextTitleStyle"
+                    android:text="姓名" />
+
+                <EditText
+                    android:id="@+id/tv_username"
+                    style="@style/TextValueStyle"
+                    android:background="@null"
+                    android:text="" />
+            </RelativeLayout>
+
+
+            <include layout="@layout/item_line_horizontal" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
+                <TextView
+                    style="@style/TextTitleStyle"
+                    android:text="工号" />
+                <EditText
+                    android:id="@+id/tv_user_number"
+                    style="@style/TextValueStyle"
+                    android:background="@null"
+                    android:text="" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
+                <TextView
+                    style="@style/TextTitleStyle"
+                    android:text="部门" />
+                <EditText
+                    android:id="@+id/tv_my_department"
+                    style="@style/TextValueStyle"
+                    android:background="@null"
+                    android:text="" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal" />
+            <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="#fff">-->
+                <!--<TextView-->
+                    <!--style="@style/TextTitleStyle"-->
+                    <!--android:text="地址" />-->
+                <!--<EditText-->
+                    <!--android:id="@+id/tv_user_address"-->
+                    <!--style="@style/TextValueStyle"-->
+                    <!--android:background="@null"-->
+                    <!--android:text="南充市" />-->
+            <!--</RelativeLayout>-->
+
+            <!--<include layout="@layout/item_line_horizontal" />-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
+
+                <TextView
+                    style="@style/TextTitleStyle"
+                    android:text="电话" />
+
+                <EditText
+                    android:id="@+id/tv_user_phone"
+                    style="@style/TextValueStyle"
+                    android:background="@null"
+                    android:text="" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:cardCornerRadius="10dp"-->
+            <!--android:layout_marginBottom="10dp">-->
+            <!---->
+        <!--</android.support.v7.widget.CardView>-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingLeft="50dp"-->
+            <!--android:paddingRight="50dp">-->
+            <!--<Button-->
+                <!--android:id="@+id/btn_cancel"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:textSize="16sp"-->
+                <!--android:visibility="gone"-->
+                <!--android:text="取消"/>-->
+            <!--<Button-->
+                <!--android:id="@+id/verify"-->
+                <!--android:visibility="gone"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:textSize="16sp"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:text="确认"/>-->
+        <!--</RelativeLayout>-->
+    </LinearLayout>
+
+
+</LinearLayout>

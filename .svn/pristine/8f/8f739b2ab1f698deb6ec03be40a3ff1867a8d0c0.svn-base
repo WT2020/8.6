@@ -1,0 +1,264 @@
+package com.hdo.WarehouseDroid.activity;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.hdo.WarehouseDroid.R;
+import com.hdo.WarehouseDroid.adapter.InOutMoveApplicationListAdapter;
+import com.hdo.WarehouseDroid.base.BaseActivity;
+import com.hdo.WarehouseDroid.bean.InOutList;
+import com.hdo.WarehouseDroid.bean.InOutListResp;
+import com.hdo.WarehouseDroid.utils.NetworkUtils;
+import com.hdo.WarehouseDroid.utils.SpUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+/**
+ * description 入/移/出库申请列表Activity
+ * author 张建银
+ * version 1.0
+ * created 2017/11/24.
+ * modified on 2017/12/15 修改本地模拟数据
+ * modified on 2017/12/22 实现申请列表的获取
+ * modified on 2017/12/25 实现多页数据上拉加载，实现搜索
+ * modified on 2018/2/5 审核后刷新数据
+ */
+
+public class InOutMoveApplicationActivity extends BaseActivity {
+
+    //toolbar组件
+    Toolbar toolbar;
+    TextView toolbar_title;
+    TextView toolbar_btn;
+
+    ListView applicationList;
+    ArrayList<InOutList> lists;
+    InOutMoveApplicationListAdapter adapter;
+
+    Context context;
+
+    //类型设定
+    RadioGroup applicationType;
+    int type;
+    boolean isInOut,isIn;
+
+    //是否滑动到底部
+    private boolean isBottom;
+    //是否加载更多
+    private boolean isLoadingMore;
+    //页数
+    private int page = 0;
+
+    //Call对象
+    private Call call;
+    //token
+    private String token;
+
+    //搜索相关
+    private SearchView searchView;
+    private String searchString;
+
+    @Override
+    public void setLayout() {
+        setContentView(R.layout.activity_in_out_move_application);
+    }
+
+    @Override
+    public void initData() {
+        context = InOutMoveApplicationActivity.this;
+        lists = new ArrayList<>();
+        type = R.id.rb_in;
+        token = SpUtils.getUser(context).getToken();
+        searchString = "";
+        setUpCall();
+        getDataFromServer();
+    }
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            isLoadingMore = false;
+            switch (message.what){
+                case 200:
+                    adapter.setObjects(lists);
+                    break;
+                case 101:
+                    Toast.makeText(context,"登录失效",Toast.LENGTH_LONG).show();
+                    break;
+                case 500:
+                    Toast.makeText(context,"未知错误，请重试",Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void getDataFromServer(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (call!=null&&!call.isExecuted()){
+                        Response response = call.execute();
+                        ResponseBody body = response.body();
+                        if (body == null){
+                            handler.sendEmptyMessage(-1);
+                        } else {
+                            String result = body.string();
+                            InOutListResp resp = new Gson().fromJson(result,InOutListResp.class);
+                            if(resp.getCode().equals("200")){
+                                lists.addAll(resp.getData().getRows());
+                                handler.sendEmptyMessage(200);
+                            } else if (resp.getCode().equals("101")){
+                                handler.sendEmptyMessage(101);
+                            } else {
+                                handler.sendEmptyMessage(500);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    //设置Call对象
+    private void setUpCall(){
+        isInOut = true;
+        switch (type){
+            case R.id.rb_in:
+                isIn = true;
+                call = NetworkUtils.getInstance().inAppList(context,token,++page,searchString);
+                break;
+            case R.id.rb_move:
+                isInOut = false;
+                break;
+            default:
+                isIn = false;
+                call = NetworkUtils.getInstance().outAppList(context,token,++page,searchString);
+                break;
+        }
+    }
+
+    @Override
+    public void initView() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_btn = (TextView)findViewById(R.id.toolbar_button);
+        applicationList = findViewById(R.id.lv_applications);
+        applicationType = findViewById(R.id.rg_application_type);
+        searchView = findViewById(R.id.search_view);
+    }
+
+    @Override
+    public void setView() {
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar!=null){
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
+        toolbar_title.setText("申请列表");
+        toolbar_btn.setVisibility(View.GONE);
+        adapter = new InOutMoveApplicationListAdapter(context, lists,isInOut,isIn);
+        applicationList.setAdapter(adapter);
+        applicationType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                lists.clear();
+                page = 0;
+                type = i;
+                setUpCall();
+                adapter = new InOutMoveApplicationListAdapter(context, lists,isInOut,isIn);
+                applicationList.setAdapter(adapter);
+                getDataFromServer();
+            }
+        });
+        //上拉加载监听
+        applicationList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                if (i == SCROLL_STATE_IDLE&&isBottom&&!isLoadingMore){
+                    isLoadingMore = true;
+                    setUpCall();
+                    getDataFromServer();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                if (i+i1 == i2){
+                    isBottom = true;
+                } else {
+                    isBottom = false;
+                }
+            }
+        });
+        //搜索监听
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.equals("")){
+                    search(newText);
+                }
+                return false;
+            }
+        });
+    }
+
+    //执行搜索
+    private void search(String search){
+        lists.clear();
+        page = 0;
+        searchString = search;
+        setUpCall();
+        getDataFromServer();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        lists.clear();
+        page = 0;
+        setUpCall();
+        adapter = new InOutMoveApplicationListAdapter(context, lists,isInOut,isIn);
+        applicationList.setAdapter(adapter);
+        getDataFromServer();
+    }
+
+    //设置返回按钮
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

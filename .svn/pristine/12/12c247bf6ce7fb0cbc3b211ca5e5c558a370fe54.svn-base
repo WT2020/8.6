@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/layout_background_shape">
+
+        <ImageView
+            android:scaleType="centerCrop"
+            android:id="@+id/img_head_img"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/tv_mine_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_head_img"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text=""
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:background="#DDD" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <include layout="@layout/item_line_horizontal"/>
+
+            <RelativeLayout
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:id="@+id/rl_personal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    app:srcCompat="@mipmap/person"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </ImageView>
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mine_tv_personal"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal"/>
+
+            <RelativeLayout
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:id="@+id/rl_change_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    app:srcCompat="@mipmap/change_pwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </ImageView>
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mine_tv_change_pwd"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal"/>
+
+            <!--<RelativeLayout-->
+                <!--android:background="@drawable/item_selector"-->
+                <!--android:clickable="true"-->
+                <!--android:id="@+id/rl_settings"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="40dp">-->
+                <!--<ImageView-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--app:srcCompat="@mipmap/settings"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content">-->
+                <!--</ImageView>-->
+                <!--<TextView-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="45dp"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/mine_tv_settings"-->
+                    <!--android:textSize="20sp" />-->
+            <!--</RelativeLayout>-->
+
+            <!--<include layout="@layout/item_line_horizontal"/>-->
+
+            <RelativeLayout
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:id="@+id/rl_about"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    app:srcCompat="@mipmap/about"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </ImageView>
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mine_tv_about"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal"/>
+
+            <RelativeLayout
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:id="@+id/rl_exit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    app:srcCompat="@mipmap/exit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </ImageView>
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mine_tv_exit"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <include layout="@layout/item_line_horizontal"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

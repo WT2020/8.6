@@ -1,0 +1,188 @@
+package com.hdo.WarehouseDroid.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.hdo.WarehouseDroid.R;
+import com.hdo.WarehouseDroid.base.BaseActivity;
+import com.hdo.WarehouseDroid.bean.StateDetailThing;
+import com.hdo.WarehouseDroid.bean.StateDetailThingResp;
+import com.hdo.WarehouseDroid.bean.Thing;
+import com.hdo.WarehouseDroid.utils.NetworkUtils;
+import com.hdo.WarehouseDroid.utils.SpUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+/**
+ * description 库存物品详细信息界面
+ * author 张建银
+ * version 1.0
+ * created 2017/11/23.
+ * modified on 2017/12/22 实现库存物品数据显示与批次物品数据获取
+ */
+
+public class StateDetailActivity extends BaseActivity {
+
+    //toolbar组件
+    Toolbar toolbar;
+    TextView toolbar_title;
+    TextView toolbar_btn;
+
+    Context context;
+
+    Thing thing;
+
+    EditText etName;
+    EditText etSpec;
+    EditText etUnit;
+    EditText etPrice;
+    EditText etNum;
+    EditText etDesc;
+    EditText etState;
+
+    TextView etThing;
+
+    List<StateDetailThing> things;
+
+    RelativeLayout rlThings;
+
+    @Override
+    public void setLayout() {
+        setContentView(R.layout.activity_state_detail);
+    }
+
+    @Override
+    public void initData() {
+        context = StateDetailActivity.this;
+        Bundle bundle = getIntent().getExtras();
+        if(bundle!=null){
+            thing = (Thing) bundle.getSerializable("thing");
+        }
+        getDataFromServer();
+    }
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            switch (message.what){
+                case 200:
+                    etThing.setText("共有"+things.size()+"批次物品，点击查看");
+                    break;
+                case 101:
+                    Toast.makeText(context,"登录失效",Toast.LENGTH_LONG).show();
+                    break;
+                case 500:
+                    Toast.makeText(context,"未知错误，请重试",Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void getDataFromServer(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String token = SpUtils.getUser(context).getToken();
+                    Call call = NetworkUtils.getInstance().stateDetail(context,token,thing.getGoods().getId());
+                    Response response = call.execute();
+                    ResponseBody body = response.body();
+                    if (body == null){
+                        handler.sendEmptyMessage(-1);
+                    } else {
+                        String result = body.string();
+                        StateDetailThingResp resp = new Gson().fromJson(result,StateDetailThingResp.class);
+                        if(resp.getCode().equals("200")){
+                            things = resp.getData().getRows();
+                            handler.sendEmptyMessage(200);
+                        } else if (resp.getCode().equals("101")){
+                            handler.sendEmptyMessage(101);
+                        } else {
+                            handler.sendEmptyMessage(500);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void initView() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_btn = (TextView)findViewById(R.id.toolbar_button);
+        etName = findViewById(R.id.tv_state_detail_name);
+        etSpec = findViewById(R.id.tv_state_detail_spec);
+        etUnit = findViewById(R.id.tv_state_detail_measure_unit);
+        etPrice = findViewById(R.id.tv_state_detail_unit_price);
+        etNum = findViewById(R.id.tv_state_detail_num);
+        etDesc = findViewById(R.id.tv_state_detail_desc);
+        etState = findViewById(R.id.tv_state_detail_state);
+        etThing = findViewById(R.id.tv_state_detail_thing);
+        rlThings = findViewById(R.id.rl_things);
+    }
+
+    @Override
+    public void setView() {
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar!=null){
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
+        toolbar_title.setText("物品详情");
+        toolbar_btn.setVisibility(View.GONE);
+        if(thing!=null){
+            etName.setText(thing.getGoods().getName());
+            etSpec.setText(thing.getGoods().getSpec());
+            etUnit.setText(thing.getGoods().getMeasurementUnit());
+            etPrice.setText(String.valueOf(thing.getGoods().getPrice()));
+            etNum.setText(String.valueOf(thing.getNum()));
+            etDesc.setText(thing.getGoods().getIntroduce());
+            etState.setText(context.getResources().getStringArray(R.array.thing_state)[Integer.parseInt(thing.getGoods().getState())]);
+        }
+        rlThings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, StateDetailListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("things",(ArrayList)things);
+                intent.putExtras(bundle);
+                context.startActivity(intent);
+            }
+        });
+    }
+
+    //设置返回按钮
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

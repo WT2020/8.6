@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/my_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="物品名" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_name"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="多芬" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="规格" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_spec"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="10瓶/箱" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="单位" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_measure_unit"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="瓶" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="单价" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_unit_price"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="20元/瓶" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="数量" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_num"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="21" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="介绍" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_desc"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="一种护肤品" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                android:id="@+id/tv_hint_come_go"
+                style="@style/TextTitleStyle"
+                android:text="状态" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_state"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="未知" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:id="@+id/rl_things"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="批次物品" />
+            <TextView
+                android:enabled="false"
+                android:id="@+id/tv_state_detail_thing"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

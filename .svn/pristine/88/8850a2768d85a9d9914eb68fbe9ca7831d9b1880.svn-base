@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="单号" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_application_detail_id"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:id="@+id/rl_house"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="仓库" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_application_detail_house"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="时间" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_application_detail_time"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="负责人" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_application_detail_people"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                android:id="@+id/tv_hint_come_go"
+                style="@style/TextTitleStyle"
+                android:text="备注" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_come_go"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="状态" />
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_application_detail_state"
+                android:hint=""
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

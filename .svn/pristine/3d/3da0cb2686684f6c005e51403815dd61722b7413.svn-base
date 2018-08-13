@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">智能云仓</string>
+    <string name="tv_title">主页</string>
+    <string name="tv_list">保存</string>
+    <string name="title_home">主页</string>
+    <string name="title_mine">我的</string>
+    <string name="mine_tv_personal">我的资料</string>
+    <string name="mine_tv_change_pwd">修改密码</string>
+    <string name="mine_tv_about">关于我们</string>
+    <string name="tv_about_app_name">应用名称：</string>
+    <string name="tv_about_app_version">应用版本：</string>
+    <string name="tv_about_copyright">版权所有：成都诚骏科技有限公司</string>
+    <string name="mine_tv_exit">退出登录</string>
+    <string name="exit_title">提示</string>
+    <string name="exit_message">确定退出？</string>
+    <string name="enter">确定</string>
+    <string name="cancel">取消</string>
+    <string name="tv_changePwd">修改密码</string>
+    <string name="hint_original_pwd">请输入原密码</string>
+    <string name="hint_new_pwd1">请输入新密码</string>
+    <string name="hint_new_pwd2">请输入确认密码</string>
+    <string name="encode_qrcode">生成二维码</string>
+    <string name="dencode_qrcode">扫描二维码</string>
+    <string name="code_text">请输入生成二维码的文本信息</string>
+    <string name="qrcodetext">这里显示扫描结果</string>
+</resources>

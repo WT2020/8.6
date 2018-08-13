@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/my_toolbar"/>
+
+    <ScrollView
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include
+                android:id="@+id/ic_base"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/item_int_out_base"/>
+
+            <include
+                android:id="@+id/ic_rent"
+                android:layout_below="@+id/ic_base"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/item_customer"/>
+
+            <include
+                android:id="@+id/ic_things"
+                android:layout_below="@+id/ic_rent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/item_in_out_move_things"/>
+        </RelativeLayout>
+    </ScrollView>
+
+    <include
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_ok_cancel_btn"/>
+
+</RelativeLayout>

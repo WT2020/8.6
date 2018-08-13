@@ -1,0 +1,260 @@
+package com.hdo.WarehouseDroid.fragment;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.hdo.WarehouseDroid.R;
+import com.hdo.WarehouseDroid.activity.AboutActivity;
+import com.hdo.WarehouseDroid.activity.LoginActivity;
+import com.hdo.WarehouseDroid.activity.PersonalInfoActivity;
+import com.hdo.WarehouseDroid.base.BaseFragment;
+import com.hdo.WarehouseDroid.bean.User;
+import com.hdo.WarehouseDroid.utils.NetworkUtils;
+import com.hdo.WarehouseDroid.utils.SpUtils;
+
+import org.json.JSONObject;
+
+import okhttp3.Call;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+
+/**
+ * description “我的”Fragment
+ * author 张建银
+ * version 1.0
+ * created 2017/11/22
+ * modified by 张建银 on 2018/2/2  退出应用改为退出登录
+ */
+
+public class MineFragment extends BaseFragment {
+
+    //菜单组件
+    RelativeLayout personalRL;
+    RelativeLayout changePwdRL;
+    RelativeLayout settingsRL;
+    RelativeLayout aboutRL;
+    RelativeLayout exitRL;
+
+    //Log标签
+    String TAG = this.getClass().getName();
+
+    //退出的对话框的按钮点击监听
+    DialogInterface.OnClickListener onClickListener;
+    //修改密码等候对话框
+    ProgressDialog progressDialog;
+    //修改密码输入对话框
+    AlertDialog dialog;
+
+    @Override
+    public void initData(){
+
+    }
+
+    @Override
+    public void initView(View view){
+        personalRL = view.findViewById(R.id.rl_personal);
+        changePwdRL = view.findViewById(R.id.rl_change_pwd);
+//        settingsRL = view.findViewById(R.id.rl_settings);
+        aboutRL = view.findViewById(R.id.rl_about);
+        exitRL = view.findViewById(R.id.rl_exit);
+    }
+
+    @Override
+    public void setView(){
+        personalRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //跳转个人资料界面
+                Intent intent = new Intent(getActivity(), PersonalInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+        changePwdRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //显示修改密码对话框
+                showChangePswDialog();
+            }
+        });
+//        settingsRL.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(getActivity(),"敬请期待后续实现！",Toast.LENGTH_SHORT).show();
+//            }
+//        });
+        aboutRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //跳转关于我们界面
+                Intent intent = new Intent(getActivity(), AboutActivity.class);
+                startActivity(intent);
+            }
+        });
+        exitRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //跳转退出登录界面
+                onClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i){
+                            case Dialog.BUTTON_POSITIVE:
+                                //退出主界面
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                startActivity(intent);
+                                SpUtils.putBoolean(getContext(), "autoLogin", false);
+                                getActivity().finish();
+                                break;
+                            case Dialog.BUTTON_NEGATIVE:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                };
+                //弹出退出确认提示对话框
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.exit_title)
+                        .setMessage(R.string.exit_message)
+                        .setPositiveButton(R.string.enter,onClickListener)
+                        .setNegativeButton(R.string.cancel,onClickListener)
+                        .show();
+            }
+        });
+
+    }
+
+    /**
+     * 显示修改密码对话框
+     */
+    private void showChangePswDialog() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_change_psw, null);
+        this.dialog = new AlertDialog.Builder(getContext()).setView(view)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("修改", null)
+                .setCancelable(true)
+                .create();
+        final EditText etOldPsw = view.findViewById(R.id.et_old_psw);
+        final EditText etNewPsw1 = view.findViewById(R.id.et_new_psw_1);
+        final EditText etNewPsw2 = view.findViewById(R.id.et_new_psw_2);
+        this.dialog.show();
+        this.dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String oldPsw = etOldPsw.getText().toString();
+                String newPsw1 = etNewPsw1.getText().toString();
+                String newPsw2 = etNewPsw2.getText().toString();
+                User user = SpUtils.getUser(getActivity());
+                String oldPassword = user.getPassword();
+                if (TextUtils.isEmpty(oldPsw) | TextUtils.isEmpty(newPsw1)) {
+                    //输入信息不完整
+                    Toast.makeText(getActivity(),"请将信息输入完整！",Toast.LENGTH_SHORT).show();
+                } else if (!newPsw1.equals(newPsw2)) {
+                    //两次密码不一致
+                    Toast.makeText(getActivity(),"两次密码不一致！",Toast.LENGTH_SHORT).show();
+                    etNewPsw1.setText("");
+                    etNewPsw2.setText("");
+                    etNewPsw1.requestFocus(); //把输入焦点放在调用这个方法的控件上。
+                } else {
+                    //密码一致 请求网络
+                    MineFragment.this.dialog.dismiss();
+                    startChangePsw(oldPsw,newPsw1);
+                }
+            }
+        });
+    }
+
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            progressDialog.dismiss();
+            switch (message.what) {
+                case -1:
+                    Toast.makeText(getActivity(), "网络请求失败，请检查网络！", Toast.LENGTH_SHORT).show();
+                    break;
+                case 0:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    dialog.setTitle("提示")
+                            .setMessage("密码更改成功，即将重新登录")
+                            .setCancelable(false)
+                            .show();
+                    SpUtils.putBoolean(getActivity(),"fromChangePsw",true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //跳转登录界面
+                            startActivity(new Intent(getActivity(), LoginActivity.class));
+                            getActivity().finish();
+                        }
+                    },2000);
+                    break;
+                case 1:
+                    Toast.makeText(getActivity(), "修改失败，原密码错误！", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(getActivity(), "修改失败,请重试！", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return false;
+        }
+    });
+
+    private void startChangePsw(final String oldPsw, final String newPsw) {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("修改密码中...");
+        progressDialog.setMessage("请稍候...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        String account = SpUtils.getString(getActivity(),"number","");
+        System.out.println("+++++++++++" + account);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Call call = NetworkUtils.getInstance().changePsw(getActivity(),oldPsw,newPsw);
+                    Response response = call.execute();
+                    ResponseBody body = response.body();
+                    if(body==null){
+
+                        //网络请求失败
+                        handler.sendEmptyMessage(-1);
+                    }else{
+                        String result = body.string();
+                        Log.e(TAG,result);
+                        JSONObject object = new JSONObject(result);
+                        if(object.getString("code").equals("200")){
+                            //修改成功
+                            handler.sendEmptyMessage(0);
+                        }else if(object.getString("code").equals("103")){
+                            //修改失败，旧密码错误
+                            handler.sendEmptyMessage(1);
+                        }
+                    }
+                }catch (Exception e){
+                    handler.sendEmptyMessage(2);
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public View setLayout(ViewGroup container){
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_mine,container,false);
+        return view;
+    }
+}

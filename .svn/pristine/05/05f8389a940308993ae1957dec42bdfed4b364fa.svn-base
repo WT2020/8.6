@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/my_toolbar"/>
+
+    <RadioGroup
+        android:id="@+id/rg_application_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rb_in"
+            style="@style/TextTitleStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            android:text="入库"
+            android:checked="true"
+            android:textColor="@color/text_title"/>
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rb_move"
+            style="@style/TextTitleStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="移库"
+            android:textColor="@color/text_title"/>
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rb_out"
+            style="@style/TextTitleStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="出库"
+            android:textColor="@color/text_title"/>
+    </RadioGroup>
+
+    <SearchView
+        android:iconifiedByDefault="false"
+        android:queryHint="物品名称"
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </SearchView>
+
+    <ListView
+        android:id="@+id/lv_applications"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
+    <!--<LinearLayout-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+    <!--</LinearLayout>-->
+
+</LinearLayout>

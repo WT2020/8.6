@@ -1,0 +1,383 @@
+package com.hdo.WarehouseDroid.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.hdo.WarehouseDroid.R;
+import com.hdo.WarehouseDroid.adapter.GoodsNameAdapter;
+import com.hdo.WarehouseDroid.adapter.OutGoodsNameAdapter;
+import com.hdo.WarehouseDroid.adapter.WarehouseShelfAdapter;
+import com.hdo.WarehouseDroid.base.BaseActivity;
+import com.hdo.WarehouseDroid.bean.OutThing;
+import com.hdo.WarehouseDroid.bean.Thing;
+import com.hdo.WarehouseDroid.bean.WarehouseInfo;
+import com.hdo.WarehouseDroid.bean.WarehouseThing;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * description 入/出库物品添加/查看Activity
+ * author 张建银
+ * version 1.0
+ * created 2017/11/23
+ * modified on 2017/12/15 修改本地模拟数据
+ * modified 吴小雪on 2017/12/18 获取数据
+ * modified on 2017/12/21 完成出入库物品添加和查看的实现
+ * modified on 2017/12/26 完成出入库物品修改的实现
+ * modified by 张建银 on 2018/2/2 修复物品操作数量未验证的bug
+ * modified by 张建银 on 2018/2/5 修复物品验证bug
+ */
+
+public class OutThingAddLookUpActivity extends BaseActivity {
+
+    private static final String TAG = OutThingAddLookUpActivity.class.getSimpleName();
+    //toolbar组件
+    Toolbar toolbar;
+    TextView toolbar_title;
+    TextView toolbar_btn;
+
+    Context context;
+    //物品名
+    //    Spinner spThingName;
+    TextView tvThingName;
+    //物品号
+    EditText edThingId;
+    //规格
+    EditText edThingSpec;
+    //单位
+    EditText edThingMeasureUnit;
+    //操作前数量
+    EditText edThingNum;
+    //操作数量
+    EditText edChangeNum;
+    //操作后数量
+    EditText edThingNewNum;
+    //备注
+    EditText edRemark;
+    //货位架
+    Spinner spLocation;
+
+    RelativeLayout rlOldLocation;
+
+    RelativeLayout rlNewLocation;
+
+    TextView tvLocation;
+
+    String name;
+
+    String shelves;
+
+    String zoneLocation;
+
+    //type:2-查看（可修改）/1-查看（不可修改）/0-添加
+    int type;
+    private Boolean isIn;
+
+    //解析出来的入库物品
+    private List<Thing> list = new ArrayList<>();
+    private WarehouseThing warehouseThing;
+    private GoodsNameAdapter inAdapter;
+    private Thing inThing;
+
+    //解析出来的出库物品
+    private List<OutThing> outList = new ArrayList<>();
+    private Thing outGoods = new Thing();
+    private OutGoodsNameAdapter outAdapter;
+    private OutThing outThing;
+
+    //货位信息
+    WarehouseInfo.WarehouseZone zone;
+    int selection;
+    String customerId;
+
+    //操作数量
+    private int changeNum;
+    //操作前数量
+    private int oldNum;
+
+    //可修改的物品在物品列表里的下标
+    private int pos = -1;
+
+    RelativeLayout rlBeforeNum;
+    RelativeLayout rlAfterNum;
+
+    @Override
+    public void setLayout() {
+        setContentView(R.layout.activity_out_thing_add_look_up);
+    }
+
+    @Override
+    public void initData() {
+        type = 0;
+        context = OutThingAddLookUpActivity.this;
+        Intent intent = getIntent();
+        customerId = intent.getStringExtra("customerId");
+        if (intent.getExtras()!=null){
+            type = intent.getExtras().getInt("type");
+            if (type!=0){
+                warehouseThing = (WarehouseThing) intent.getExtras().getSerializable("thing");
+                //若是可修改的情况，获取修改的物品在物品列表里的下标
+                if (type==2){
+                    pos = intent.getExtras().getInt("pos");
+                    zone = (WarehouseInfo.WarehouseZone) intent.getExtras().getSerializable("zone");
+                    if (zone!=null){
+                        ArrayList<WarehouseInfo.WarehouseZone.WarehouseShelf> warehouseShelves = zone.getWarehouseShelfVos();
+                        if (warehouseShelves!=null){
+                            for(int i = 0;i<warehouseShelves.size();i++){
+                                WarehouseInfo.WarehouseZone.WarehouseShelf warehouseShelf = warehouseShelves.get(i);
+                                if(warehouseShelf.getWarehouseId() == Integer.parseInt(warehouseThing.getWarehouseId())){
+                                    selection = i;
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                zone = (WarehouseInfo.WarehouseZone) intent.getExtras().getSerializable("zone");
+            }
+        }
+        if (warehouseThing==null){
+            warehouseThing = new WarehouseThing();
+        }
+        isIn = intent.getBooleanExtra("flag",true);
+    }
+
+    @Override
+    public void initView() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_btn = (TextView)findViewById(R.id.toolbar_button);
+
+        tvThingName = (TextView) findViewById(R.id.tv_thing_name);
+        edThingId = (EditText)findViewById(R.id.ed_thing_id);
+        edThingSpec = (EditText)findViewById(R.id.ed_thing_spec);
+        edThingMeasureUnit = (EditText)findViewById(R.id.ed_thing_measure_unit);
+        edThingNum = (EditText)findViewById(R.id.ed_thing_num);
+        edChangeNum = (EditText)findViewById(R.id.ed_change_num);
+        edThingNewNum = (EditText) findViewById(R.id.ed_thing_new_num);
+        edRemark = (EditText)findViewById(R.id.ed_remark);
+        spLocation = (Spinner)findViewById(R.id.sp_location);
+        rlBeforeNum = findViewById(R.id.rl_before_num);
+        rlAfterNum = findViewById(R.id.rl_after_num);
+
+        rlOldLocation = (RelativeLayout) findViewById(R.id.rl_old_location);
+        rlNewLocation = (RelativeLayout) findViewById(R.id.rl_new_location);
+        tvLocation = (TextView) findViewById(R.id.tv_location);
+    }
+
+    @Override
+    public void setView() {
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar!=null){
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
+        //显示需要查看/修改的数据
+        if (warehouseThing.getGoods()!=null){
+            tvThingName.setText(warehouseThing.getGoods().getName());
+            edThingId.setText(warehouseThing.getGoods().getRfidCode());
+            edThingMeasureUnit.setText(warehouseThing.getGoods().getMeasurementUnit());
+            edThingSpec.setText(warehouseThing.getGoods().getSpec());
+            edThingNum.setText(String.valueOf(warehouseThing.getNum()));
+            if (isIn){
+                edChangeNum.setText(String.valueOf(warehouseThing.getAddAmount()));
+            }else{
+                edChangeNum.setText(String.valueOf(warehouseThing.getRemoveAmount()));
+            }
+            changeNum = Integer.parseInt(edChangeNum.getText().toString());
+            edThingNewNum.setText(String.valueOf(warehouseThing.getChangedNum()));
+            edRemark.setText(warehouseThing.getRemark());
+            oldNum = warehouseThing.getNum();
+            rlNewLocation.setVisibility(View.VISIBLE);
+        }
+        switch (type){
+            case 2:
+                toolbar_title.setText("物品查看(可修改)");
+                toolbar_btn.setText("确认修改");
+                rlNewLocation.setVisibility(View.GONE);
+                spLocation.setAdapter(new WarehouseShelfAdapter(context, R.layout.goodsitem,zone.getWarehouseShelfVos()));
+                spLocation.setSelection(selection);
+                setThingClick();
+                setBack();
+                break;
+            case 1:
+                name = warehouseThing.getWarehouse().getName();
+                shelves = warehouseThing.getWarehouse().getShelves();
+                zoneLocation = warehouseThing.getWarehouse().getZone();
+                tvLocation.setText(name + "-" + shelves + "-" + zoneLocation);
+                rlOldLocation.setVisibility(View.GONE);
+                toolbar_title.setText("物品查看");
+                toolbar_btn.setVisibility(View.GONE);
+                rlAfterNum.setVisibility(View.GONE);
+                rlBeforeNum.setVisibility(View.GONE);
+                edChangeNum.setEnabled(false);
+                edRemark.setEnabled(false);
+                break;
+            default:
+                toolbar_title.setText("物品添加");
+                toolbar_btn.setText("确认添加");
+                spLocation.setAdapter(new WarehouseShelfAdapter(context, R.layout.goodsitem,zone.getWarehouseShelfVos()));
+                setThingClick();
+                setBack();
+                break;
+        }
+        edChangeNum.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if("".equals(s.toString().trim())){
+                    changeNum = 0;
+                }else{
+                    changeNum = Integer.valueOf(s.toString().trim());
+                }
+                if (isIn){
+                    warehouseThing.setAddAmount(changeNum);
+                    edThingNewNum.setText(oldNum+changeNum + "");
+                }else{
+                    int newN = oldNum-changeNum;
+                    if (newN < 0){
+                        edThingNewNum.setText("");
+                        edChangeNum.setText("");
+                        Toast.makeText(context, "数量不能超界！", Toast.LENGTH_SHORT).show();
+                        changeNum = -1;
+                        warehouseThing.setRemoveAmount(0);
+                    }else{
+                        warehouseThing.setRemoveAmount(changeNum);
+                        edThingNewNum.setText(newN+"");
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void handleInOrOut(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isIn){
+                    //                    inAdapter = new GoodsNameAdapter(context,R.layout.goodsitem,list);
+
+                    edThingId.setText(inThing.getGoods().getRfidCode());
+                    edThingSpec.setText(inThing.getGoods().getSpec());
+                    edThingMeasureUnit.setText(inThing.getGoods().getMeasurementUnit());
+                    warehouseThing.setGoods(inThing.getGoods());
+                    warehouseThing.setGoodsId(inThing.getGoods().getRfidCode());
+                    edThingNum.setText(inThing.getNum()+"");
+                    oldNum = inThing.getNum();
+                    tvThingName.setText(inThing.getGoods().getName());
+                    //                    spThingName.setAdapter(inAdapter);
+                }else {
+                    //                    outAdapter = new OutGoodsNameAdapter(context,R.layout.goodsitem,outList);
+
+                    //                    spThingName.setAdapter(outAdapter);
+                    edThingId.setText(outThing.getRfidCode());
+                    edThingSpec.setText(outThing.getSpec());
+                    edThingMeasureUnit.setText(outThing.getMeasurementUnit());
+                    warehouseThing.setGoods(outThing);
+                    warehouseThing.setGoodsId(outThing.getRfidCode());
+                    edThingNum.setText(outThing.getNum()+"");
+                    oldNum = outThing.getNum();
+                    tvThingName.setText(outThing.getName());
+                }
+            }
+        });
+    }
+
+    private void setThingClick(){
+        tvThingName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,ChooseThingActivity.class);
+                intent.putExtra("flag",isIn);
+                intent.putExtra("customerId",customerId);
+                startActivityForResult(intent,1);
+            }
+        });
+    }
+
+    private void setBack(){
+        //返回物品列表界面
+        toolbar_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (warehouseThing.getGoods()==null||changeNum <= 0){
+                    Toast.makeText(context, "物品和数量不能为空！", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent();
+                    Bundle bundle = new Bundle();
+                    warehouseThing.setNum(Integer.valueOf(edThingNum.getText().toString()));
+                    warehouseThing.setRemark(edRemark.getText().toString());
+                    WarehouseInfo.WarehouseZone.WarehouseShelf warehouseShelf = zone.getWarehouseShelfVos().get(spLocation.getSelectedItemPosition());
+                    warehouseThing.setWarehouseId(String.valueOf(warehouseShelf.getWarehouseId()));
+                    warehouseThing.setChangedNum(Integer.parseInt(edThingNewNum.getText().toString()));
+                    bundle.putSerializable("warehouseThing",warehouseThing);
+                    //若是可修改的情况，把欲修改的物品在List的下标传回去
+                    if (type == 2){
+                        bundle.putInt("pos",pos);
+                    }
+                    intent.putExtras(bundle);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
+            }
+        });
+    }
+
+    //设置返回按钮
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if(resultCode == RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    if (bundle!=null){
+                        //清空之前填写的数量等信息
+                        edThingNewNum.setText("");
+                        edChangeNum.setText("");
+                        edRemark.setText("");
+                        if (isIn){
+                            inThing = (Thing) bundle.getSerializable("thing");
+                            handleInOrOut();
+                        }else {
+                            outThing = (OutThing) bundle.getSerializable("thing");
+                            handleInOrOut();
+                        }
+                    }
+                }
+                break;
+            default:
+        }
+    }
+}

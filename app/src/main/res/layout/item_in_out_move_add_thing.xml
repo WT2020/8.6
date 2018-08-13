@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="物品名" />
+         <!--   <Spinner
+                android:layout_alignParentRight="true"
+                android:id="@+id/sp_thing_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />-->
+            <TextView
+                style="@style/TextTitleStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:id="@+id/tv_thing_name"
+                android:text="请选择要添加的物品"/>
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="物品编号" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/ed_thing_id"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="规格" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/ed_thing_spec"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="单位" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/ed_thing_measure_unit"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:id="@+id/rl_before_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="操作前数量" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/ed_thing_num"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+            <TextView
+                android:id="@+id/tv_hint_come_go"
+                style="@style/TextTitleStyle"
+                android:text="操作数量" />
+            <EditText
+                android:id="@+id/ed_change_num"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:inputType="number"
+                android:hint="请输入数量"
+                android:gravity="right"/>
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:id="@+id/rl_after_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="操作后数量" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/ed_thing_new_num"
+                style="@style/TextValueStyle"
+                android:background="@null" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginLeft="14dp"
+                android:text="备注"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/ed_remark"
+                android:layout_marginEnd="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

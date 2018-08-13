@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="物品编号" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_thing_id"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="11712345678" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="名称" />
+
+            <EditText
+                android:id="@+id/tv_thing_name"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:enabled="false"
+                android:text="多芬" />
+        </RelativeLayout>
+        <include layout="@layout/item_line_horizontal" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <TextView
+                style="@style/TextTitleStyle"
+                android:text="操作数量" />
+
+            <EditText
+                android:enabled="false"
+                android:id="@+id/tv_thing_change_num"
+                style="@style/TextValueStyle"
+                android:background="@null"
+                android:text="1" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

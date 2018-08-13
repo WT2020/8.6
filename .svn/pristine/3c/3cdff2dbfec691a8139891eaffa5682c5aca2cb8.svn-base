@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--仓库-->
+    <string-array name="house">
+        <item>一号仓库</item>
+        <item>二号仓库</item>
+        <item>三号仓库</item>
+    </string-array>
+    <!--区位-->
+    <string-array name="area">
+        <item>A区</item>
+        <item>B区</item>
+        <item>C区</item>
+    </string-array>
+    <!--账单状态-->
+    <string-array name="settlement_state">
+        <item>未结算</item>
+        <item>部分结算</item>
+        <item>已付清</item>
+    </string-array>
+    <!--是否栈板-->
+    <string-array name="is_pallet">
+        <item>否</item>
+        <item>是</item>
+    </string-array>
+    <!--物品状态-->
+    <string-array name="thing_state">
+        <item>低库存预警</item>
+        <item>正常</item>
+    </string-array>
+    <!--批次物品状态-->
+    <string-array name="thing_detail_state">
+        <item>正常</item>
+        <item>本批次销售完毕</item>
+        <item>已冻结</item>
+        <item>已挂起</item>
+    </string-array>
+    <!--入库单状态-->
+    <string-array name="in_thing_apply_state">
+        <item>未审核</item>
+        <item>审核通过</item>
+        <item>已报废</item>
+    </string-array>
+    <!--出库单状态-->
+    <string-array name="out_thing_apply_state">
+        <item>未审核</item>
+        <item>审核通过</item>
+        <item>已退回</item>
+        <item>已结转</item>
+    </string-array>
+</resources>
